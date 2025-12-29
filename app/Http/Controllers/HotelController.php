@@ -10,14 +10,14 @@ use Illuminate\Http\Request;
 
 class HotelController extends Controller
 {
-    // 📃 список
+  
     public function index()
     {
         $hotels = Hotel::with('facilities')->latest()->get();
         return view('hotels.index', compact('hotels'));
     }
 
-    // 👁 просмотр одного
+  
   public function show(Hotel $hotel)
 {
 
