@@ -21,26 +21,51 @@
         <div class="flex flex-col">
             <div class="text-2xl text-center md:text-start font-bold">Забронировать комнату</div>
 
-            <form method="get" action="{{ url()->current() }}">
-                <div class="flex my-6">
-                    <div class="flex items-center mr-5">
-                        <div class="relative">
-                            <input name="start_date" min="{{ date('Y-m-d') }}" value="{{ $startDate }}"
-                                   placeholder="Дата заезда" type="date"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5">
-                        </div>
-                        <span class="mx-4 text-gray-500">по</span>
-                        <div class="relative">
-                            <input name="end_date" type="date" min="{{ date('Y-m-d') }}" value="{{ $endDate }}"
-                                   placeholder="Дата выезда"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5">
-                        </div>
-                    </div>
-                    <div>
-                        <x-the-button type="submit" class=" h-full w-full">Загрузить номера</x-the-button>
-                    </div>
-                </div>
-            </form>
+           <form method="get" action="{{ url()->current() }}" class="flex flex-wrap gap-4 my-6 items-end">
+
+    {{-- Даты заезда и выезда --}}
+    <div class="flex items-center gap-2">
+        <input name="start_date" type="date" min="{{ date('Y-m-d') }}"
+               value="{{ request('start_date', $startDate ?? now()->toDateString()) }}"
+               class="bg-gray-50 border border-gray-300 rounded-lg p-2.5">
+        <span class="text-gray-500">по</span>
+        <input name="end_date" type="date" min="{{ date('Y-m-d') }}"
+               value="{{ request('end_date', $endDate ?? now()->addDay()->toDateString()) }}"
+               class="bg-gray-50 border border-gray-300 rounded-lg p-2.5">
+    </div>
+
+    {{-- Цена --}}
+    <input type="number" name="price_from" placeholder="Цена от"
+           value="{{ request('price_from') }}"
+           class="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-24">
+    <input type="number" name="price_to" placeholder="Цена до"
+           value="{{ request('price_to') }}"
+           class="bg-gray-50 border border-gray-300 rounded-lg p-2.5 w-24">
+
+    {{-- Удобства (Select2) --}}
+  <select name="facilities[]" multiple="multiple" class="select2" style="width: 100%">
+    @foreach($facilities as $facility)
+        <option value="{{ $facility->id }}"
+            @selected(in_array($facility->id, request('facilities', [])))>
+            {{ $facility->title }}
+        </option>
+    @endforeach
+</select>
+
+<select name="category" class="select2" style="width: 100%">
+    <option value="">Выберите категорию</option>
+    @foreach($types as $type)
+        <option value="{{ $type }}" @selected(request('category') == $type)>
+            {{ $type }}
+        </option>
+    @endforeach
+</select>
+
+
+
+
+    <x-the-button type="submit">Показать</x-the-button>
+</form>
            @if($startDate && $endDate)
                 <div class="flex flex-col w-full lg:w-4/5">
                     @foreach($rooms as $room)

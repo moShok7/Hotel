@@ -7,7 +7,8 @@ use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use App\Mail\BookingConfirmed;
+use Illuminate\Support\Facades\Mail;
 class BookingController extends Controller
 {
    public function store(Request $request)
@@ -47,6 +48,8 @@ class BookingController extends Controller
         'price'       => $room->price * $days, // или $room->price_per_night
     ]);
 
+
+     Mail::to($booking->user->email)->send(new BookingConfirmed($booking));
     // 6. Редирект на страницу бронирования с флеш-сообщением
     return redirect()->route('bookings.show', $booking)
                      ->with('success', 'Бронирование успешно создано!');
@@ -54,13 +57,20 @@ class BookingController extends Controller
 
 
     public function show(Booking $booking){
-
         return view('bookings.show', compact('booking'));
     }
 
     
     public function index(){
-        $bookings = Booking::all();
+        $bookings = Booking::where('user_id' , auth()->id())->get();
         return view('bookings.index', compact('bookings'));
+    }
+
+    public function destroy(Booking $booking){
+if($booking->user_id !== auth()->id()){
+     abort(403);
+}
+$booking->delete();
+return redirect()->route('bookings.index')->with('success', 'Бронирование отменено.');
     }
 }

@@ -12,8 +12,9 @@ class Facility extends Model
     public function Hotels(){
         return $this->belongsToMany(hotel::class);
     }
-     public function rooms(){
-        return $this->belongsToMany(hotel::class);
-    }
+    public function rooms()
+{
+    return $this->belongsToMany(Room::class, 'facility_room'); // правильная таблица
+}
     
 }
