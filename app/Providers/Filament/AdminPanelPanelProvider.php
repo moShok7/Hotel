@@ -18,12 +18,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-
+ use App\Http\Middleware\AdminOnly;
 class AdminPanelPanelProvider extends PanelProvider
 {
-    public static function default(): ?string
+     public static function default(): ?string
     {
-        return 'admin'; // имя панели по умолчанию
+        return 'admin'; // делаем эту панель по умолчанию
     }
 
     public function panel(Panel $panel): Panel
@@ -56,8 +56,9 @@ class AdminPanelPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
+           ->authMiddleware([
+                \Filament\Http\Middleware\Authenticate::class,
+                AdminOnly::class, // <-- проверка email
             ]);
     }
 }
