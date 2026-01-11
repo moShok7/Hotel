@@ -16,11 +16,8 @@ Route::middleware('auth')->group(function (){
 Route::post('/bookings' , [BookingController::class , 'store'])->name('bookings.store');
 Route::get('/bookings/{booking}' , [BookingController::class , 'show'])->name('bookings.show');
 });
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::get('/dashboard', function () {
+Route::get('/', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 

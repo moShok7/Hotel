@@ -45,4 +45,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function canAccessFilament(): bool
+{
+    // Разрешаем доступ только admin@example.com
+    return $this->email === 'admin@example.com';
+}
+
 }
